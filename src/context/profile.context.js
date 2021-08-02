@@ -13,14 +13,16 @@ export const ProfileProvider =  ({ children }) => {
 
         let userRef;
         const authUnsub = auth.onAuthStateChanged( authObj =>{
+            // eslint-disable-next-line no-constant-condition
             if(authObj){
                 userRef = database.ref(`/profile/${authObj.uid}`);
                 userRef.on('value', (snap) => {
-                    const {name, createdAt} = snap.val();
+                    const {name, createdAt, avatar} = snap.val();
                     
                     const data ={
                         name,
                         createdAt,
+                        avatar,
                         uid: authObj.uid,
                         email: authObj.email,
                     };
