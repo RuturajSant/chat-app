@@ -68,19 +68,6 @@ const AvatarUploadBtn = () => {
     }
   }
 
-
-  // const onDeleteClick = async () => {
-  //   const avatarFileRef = storage.ref(`/profile/${profile.uid}`).child('avatar');
-  //   const userAvatarRef = database.ref(`/profile/${profile.uid}`).child('avatar');
-  //   try {
-  //     userAvatarRef.remove();
-  //     avatarFileRef.delete();
-  //     Alert.info('Avatar has been deleted');
-  //   } catch (error) {
-  //     Alert.error(error.message,4000);
-  //   } 
-  // }
-
   return (
     <div className="mt-3 text-center">
 
@@ -99,9 +86,7 @@ const AvatarUploadBtn = () => {
             onChange={onFileInputChange}
           />
         </label>
-        {/* <Button onClick={onDeleteClick} disabled={isLoading}>
-              Delete avatar
-        </Button> */}
+        
 
         <Modal show={isOpen} onHide={close}>
           <Modal.Header>
