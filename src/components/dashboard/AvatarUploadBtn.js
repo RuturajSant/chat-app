@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import React, { useState, useRef } from 'react';
 import { Modal, Button, Alert } from 'rsuite';
 import AvatarEditor from 'react-avatar-editor';
@@ -62,10 +63,26 @@ const AvatarUploadBtn = () => {
       userAvatarRef.set(downloadUrl);
       setIsLoading(false);
       Alert.info('Avatar has been uploaded');
+      close();
     } catch (error) {
       setIsLoading(false);
       Alert.error(error.message,4000);
     }
+  }
+  // /profile/${profile.uid}/avatar
+
+  const onDeleteClick = async () => {
+    const userAvatarRef = database.ref(`/profile/${profile.uid}`).child('avatar');
+    const avatarFileRef = storage.ref(`/profile/${profile.uid}`).child('avatar');
+
+    try {
+      
+      userAvatarRef.remove();
+      avatarFileRef.delete();
+      Alert.info('Avatar has been deleted');
+    } catch (error) {
+      Alert.error(error.message,4000);
+    } 
   }
 
   return (
@@ -86,7 +103,9 @@ const AvatarUploadBtn = () => {
             onChange={onFileInputChange}
           />
         </label>
-        
+        <Button onClick={onDeleteClick} disabled={isLoading}>
+              Delete avatar
+        </Button>
 
         <Modal show={isOpen} onHide={close}>
           <Modal.Header>
