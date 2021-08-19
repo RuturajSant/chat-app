@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import { Loader } from 'rsuite';
 
@@ -14,6 +14,7 @@ const Chat = () => {
   const { chatId } = useParams();
 
   const rooms = useRooms();
+  const [isRoomDeleted,getIsRoomDeleted] = useState(false);
 
   if (!rooms) {
     return <Loader center vertical size="md" content="Loading" speed="slow" />;
@@ -21,6 +22,9 @@ const Chat = () => {
 
   const currentRoom = rooms.find(room => room.id === chatId);
 
+  if (!currentRoom && isRoomDeleted) {
+    return <h6 className="text-center mt-page">Please select chat</h6>;
+  }
   if (!currentRoom) {
     return <h6 className="text-center mt-page">Chat {chatId} not found</h6>;
   }
@@ -40,7 +44,7 @@ const Chat = () => {
   return (
     <CurrentRoomProvider data={currentRoomData}>
       <div className="chat-top">
-        <ChatTop />
+        <ChatTop isRoomDeleted={isRoomDeleted} getIsRoomDeleted={getIsRoomDeleted} />
       </div>
       <div className="chat-middle">
         <Messages />

@@ -6,7 +6,7 @@ import { useMediaQuery } from '../../../misc/custom-hooks';
 import RoomInfoBtnModal from './RoomInfoBtnModal';
 import EditRoomBtnDrawer from './EditRoomBtnDrawer';
 
-const Top = () => {
+const Top = ({getIsRoomDeleted}) => {
   const name = useCurrentRoom(v => v.name);
   const isAdmin = useCurrentRoom(v => v.isAdmin);
   const isMobile = useMediaQuery('(max-width: 992px)');
@@ -30,7 +30,7 @@ const Top = () => {
         </h4>
 
         <ButtonToolbar className="ws-nowrap">
-          {isAdmin && <EditRoomBtnDrawer />}
+          {isAdmin && <EditRoomBtnDrawer getIsRoomDeleted={getIsRoomDeleted}  />}
         </ButtonToolbar>
       </div>
 

@@ -5,6 +5,7 @@
 /.pnp
 /Assets
 .pnp.js
+.firebase
 
 # testing
 /coverage

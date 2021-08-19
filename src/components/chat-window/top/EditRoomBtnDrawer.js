@@ -6,7 +6,7 @@ import EditableInput from '../../EditableInput';
 import { useCurrentRoom } from '../../../context/current-room.context';
 import { database } from '../../../misc/firebase';
 
-const EditRoomBtnDrawer = () => {
+const EditRoomBtnDrawer = ({getIsRoomDeleted}) => {
   const { isOpen, open, close } = useModalState();
   const { chatId } = useParams();
   const isMobile = useMediaQuery('(max-width: 992px)');
@@ -42,23 +42,18 @@ const EditRoomBtnDrawer = () => {
           return;
         }
     
-        // await roomRef.transaction(room => {
-        //   if(room){
-        //     room = null; 
-        //   }
-        // });
-    
         try {
           roomRef.remove();  
+          getIsRoomDeleted(true);
         } catch (error) {
           Alert.error(error.message, 4000);
         }
-      },[chatId]);
+      },[chatId,getIsRoomDeleted]);
     
   return (
     <div>
-      <Button className="br-circle" size="sm" color="red" onClick={open}>
-        A
+      <Button  size="sm" color="red" onClick={open}>
+        Admin Console
       </Button>
 
       <Drawer full={isMobile} show={isOpen} onHide={close} placement="right">
