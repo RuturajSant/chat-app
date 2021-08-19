@@ -1,36 +1,38 @@
+/* eslint-disable no-console */
 import React, { useState, useRef } from 'react';
 import { Modal, Button, Alert } from 'rsuite';
 import AvatarEditor from 'react-avatar-editor';
 import { useModalState } from '../../misc/custom-hooks';
-import { storage, database } from '../../misc/firebase';
+import { database, storage } from '../../misc/firebase';
 import { useProfile } from '../../context/profile.context';
 import ProfileAvatar from '../ProfileAvatar';
-import { getUserUpdates } from '../../misc/helpers';
 
 const fileInputTypes = '.png, .jpeg, .jpg';
+
 
 const acceptedFileTypes = ['image/png', 'image/jpeg', 'image/pjpeg'];
 const isValidFile = file => acceptedFileTypes.includes(file.type);
 
-const getBlob = canvas => {
-  return new Promise((resolve, reject) => {
-    canvas.toBlob(blob => {
-      if (blob) {
+const getBlob = (canvas) => {
+  return new Promise( (resolve,reject) =>{
+
+    canvas.toBlob( (blob) =>{
+      if(blob){
         resolve(blob);
-      } else {
+      }else{
         reject(new Error('File process error'));
       }
-    });
-  });
-};
+      
+    } )
+  })
+}
 
 const AvatarUploadBtn = () => {
   const { isOpen, open, close } = useModalState();
-
-  const { profile } = useProfile();
+  const avatarEditorRef = useRef();
+  const {profile} = useProfile();
   const [img, setImg] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const avatarEditorRef = useRef();
 
   const onFileInputChange = ev => {
     const currFiles = ev.target.files;
@@ -40,7 +42,6 @@ const AvatarUploadBtn = () => {
 
       if (isValidFile(file)) {
         setImg(file);
-
         open();
       } else {
         Alert.warning(`Wrong file type ${file.type}`, 4000);
@@ -48,48 +49,46 @@ const AvatarUploadBtn = () => {
     }
   };
 
-  const onUploadClick = async () => {
+  const onUploadClick = async ()=>{
     const canvas = avatarEditorRef.current.getImageScaledToCanvas();
-
     setIsLoading(true);
     try {
       const blob = await getBlob(canvas);
-
-      const avatarFileRef = storage
-        .ref(`/profile/${profile.uid}`)
-        .child('avatar');
-
+      const avatarFileRef = storage.ref(`/profile/${profile.uid}`).child('avatar');
       const uploadAvatarResult = await avatarFileRef.put(blob, {
-        cacheControl: `public, max-age=${3600 * 24 * 3}`,
-      });
-
-      const downloadUrl = await uploadAvatarResult.ref.getDownloadURL();
-
-      const updates = await getUserUpdates(
-        profile.uid,
-        'avatar',
-        downloadUrl,
-        database
-      );
-
-      await database.ref().update(updates);
-
+        cacheControl:`public, max-age=${3600 * 24 * 3}`
+      }) ; 
+      const downloadUrl = await uploadAvatarResult.ref.getDownloadURL()
+      const userAvatarRef = database.ref(`/profiles/${profile.uid}`).child('avatar');
+      userAvatarRef.set(downloadUrl);
       setIsLoading(false);
-      Alert.info('Avatar has been uploaded', 4000);
-    } catch (err) {
+      Alert.info('Avatar has been uploaded');
+      close();
+    } catch (error) {
       setIsLoading(false);
-      Alert.error(err.message, 4000);
+      Alert.error(error.message,4000);
     }
-  };
+  }
+  // /profile/${profile.uid}/avatar
+
+  const onDeleteClick = async () => {
+    const userAvatarRef = database.ref(`/profiles/${profile.uid}`).child('avatar');
+    const avatarFileRef = storage.ref(`/profile/${profile.uid}`).child('avatar');
+
+    try {
+      
+      userAvatarRef.remove();
+      avatarFileRef.delete();
+      Alert.info('Avatar has been deleted');
+    } catch (error) {
+      Alert.error(error.message,4000);
+    } 
+  }
 
   return (
     <div className="mt-3 text-center">
-      <ProfileAvatar
-        src={profile.avatar}
-        name={profile.name}
-        className="width-200 height-200 img-fullsize font-huge"
-      />
 
+      <ProfileAvatar src={profile.avatar} name={profile.name} className="width-200 height-200 img-fullsize font-huge" />
       <div>
         <label
           htmlFor="avatar-upload"
@@ -104,6 +103,9 @@ const AvatarUploadBtn = () => {
             onChange={onFileInputChange}
           />
         </label>
+        <Button onClick={onDeleteClick} disabled={isLoading}>
+              Delete avatar
+        </Button>
 
         <Modal show={isOpen} onHide={close}>
           <Modal.Header>
@@ -125,12 +127,7 @@ const AvatarUploadBtn = () => {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button
-              block
-              appearance="ghost"
-              onClick={onUploadClick}
-              disabled={isLoading}
-            >
+            <Button block appearance="ghost" onClick={onUploadClick} disabled={isLoading}>
               Upload new avatar
             </Button>
           </Modal.Footer>
