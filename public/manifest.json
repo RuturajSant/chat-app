@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "R-Chat",
+  "name": "Chat Application by Ruturaj Sant",
   "icons": [
     {
       "src": "favicon.ico",
