@@ -16,12 +16,13 @@ const Sidebar = () => {
 
   return (
     <div className="h-100 pt-2">
-      <div ref={topSidebarRef}>
+      <div className="float-right" ref={topSidebarRef}>
+        <img className="logo-center" alt="logo" src="./logo90.png" />
         <DashboardToggle />
         <CreateRoomBtnModal />
         <Divider>Join conversation</Divider>
       </div>
-      <ChatRoomList aboveElHeight={height} />
+      <div className="clear-both" ><ChatRoomList aboveElHeight={height} /></div>
     </div>
   );
 };

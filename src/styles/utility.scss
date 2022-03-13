@@ -21,6 +21,19 @@ $indent_3: 15px;
   text-align: right;
 }
 
+.float-left {
+  float: left;
+}
+
+
+.clear-both {
+  clear: both;
+}
+
+.logo-center{
+  margin-left:50%;
+  transform:translateX(-50%);
+}
 .text-disappear {
   white-space: nowrap !important;
   text-overflow: ellipsis !important;
